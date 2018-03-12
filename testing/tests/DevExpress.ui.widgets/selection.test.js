@@ -1382,11 +1382,11 @@ QUnit.test("Deselect one item after selectAll when filter contains 'or' operatio
 
     // assert
     assert.deepEqual(selection.selectionFilter(), [[["id", "=", 2], "or", [["age", "=", 15], "or", ["age", "=", 20]]], "and", ["!", ["id", "=", 2]]], "selection filter");
-    assert.strictEqual(selection.getSelectAllState(), undefined, "select all is true");
+    assert.strictEqual(selection.getSelectAllState(), undefined, "select all is undefined");
     assert.strictEqual(selection.isItemSelected(this.data[1]), false, "item 1 should not be selected");
 });
 
-QUnit.test("select and deselect several items", function(assert) {
+QUnit.test("select and deselect several items in scatter way", function(assert) {
     var selection = this.createDeferredSelection(this.data);
 
     // act
@@ -1397,7 +1397,24 @@ QUnit.test("select and deselect several items", function(assert) {
     selection.changeItemSelection(1, { control: true });
 
     // assert
-    assert.strictEqual(selection.getSelectAllState(), undefined, "select all is undefined");
+    assert.strictEqual(selection.getSelectAllState(), false, "select all is false");
+    assert.strictEqual(selection.isItemSelected(this.data[0]), false, "item 0 should not be selected");
+    assert.strictEqual(selection.isItemSelected(this.data[1]), false, "item 1 should not be selected");
+    assert.strictEqual(selection.isItemSelected(this.data[2]), false, "item 2 should not be selected");
+});
+
+QUnit.test("select and deselect several items in order way", function(assert) {
+    var selection = this.createDeferredSelection(this.data);
+
+    // act
+    this.dataSource.filter(["age", ">", 0]);
+    selection.changeItemSelection(0, { control: true });
+    selection.changeItemSelection(1, { control: true });
+    selection.changeItemSelection(1, { control: true });
+    selection.changeItemSelection(0, { control: true });
+
+    // assert
+    assert.strictEqual(selection.getSelectAllState(), false, "select all is false");
     assert.strictEqual(selection.isItemSelected(this.data[0]), false, "item 0 should not be selected");
     assert.strictEqual(selection.isItemSelected(this.data[1]), false, "item 1 should not be selected");
     assert.strictEqual(selection.isItemSelected(this.data[2]), false, "item 2 should not be selected");
